@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:macro name="leg" params="prefix leglen footlen">
+        <xacro:include filename="wheel.urdf.xacro" />
+        <xacro:property name="wheeldiam" value="0.07" />
+
+        <!-- レッグの作成 -->
+        <link name="${prefix}_leg">
+            <visual>
+                <geometry>
+                    <box size="${leglen} 0.1 0.2" />
+                </geometry>
+                <origin xyz="0 0 -${leglen/2}" rpy="0 ${pi/2} 0" />
+                <material name="white" />
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${leglen} 0.1 0.2" />
+                </geometry>
+                <origin xyz="0 0 -${leglen/2}" rpy="0 ${pi/2} 0" />
+            </collision>
+            <inertial>
+                <mass value="10" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+            </inertial>
+        </link>
+
+        <!-- フットの作成 -->
+        <link name="${prefix}_foot">
+            <visual>
+                <geometry>
+                    <box size="${footlen} 0.1 0.1" />
+                </geometry>
+                <material name="white" />
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${footlen} 0.1 0.1" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="10" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+            </inertial>
+        </link>
+        
+        <!-- レッグとフットをつなげる -->
+        <joint name="${prefix}_base_joint" type="fixed">
+            <parent link="${prefix}_leg" />
+            <child link="${prefix}_foot" />
+            <origin xyz="0 0 ${-leglen}" />
+        </joint>
+
+        <!-- 前輪，後輪のホイールを作成 -->
+        <xacro:wheel prefix="${prefix}" suffix="front" wheeldiam="${wheeldiam}" />
+        <xacro:wheel prefix="${prefix}" suffix="back" wheeldiam="${wheeldiam}" />
+
+        <!-- フットと前輪をつなげる -->
+        <joint name="${prefix}_front_wheel_joint" type="continuous">
+            <axis xyz="0 1 0" rpy="0 0 0" />
+            <parent link="${prefix}_foot" />
+            <child link="${prefix}_front_wheel" />
+            <origin xyz="${footlen/3} 0 -${wheeldiam/2+.05}" rpy="0 0 0" />
+        </joint>
+        <!-- フットと後輪をつなげる -->
+        <joint name="${prefix}_back_wheel_joint" type="continuous">
+            <axis xyz="0 1 0" rpy="0 0 0" />
+            <parent link="${prefix}_foot" />
+            <child link="${prefix}_back_wheel" />
+            <origin xyz="${-1*footlen/3} 0 -${wheeldiam/2+.05}" rpy="0 0 0" />
+        </joint>
+        
+    </xacro:macro>
+</robot>

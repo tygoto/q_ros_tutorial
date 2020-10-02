@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot name="simplebot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:include filename="body.urdf.xacro" />
+    <xacro:include filename="leg.urdf.xacro" />
+    <xacro:include filename="head.urdf.xacro" />
+
+    <xacro:property name="width" value="0.2" />
+    <xacro:property name="bodylen" value="0.6" />
+    <xacro:property name="leglen" value="0.6" />
+    <xacro:property name="footlen" value="0.4" />
+
+    <material name="blue">
+        <color rgba="0 0 0.8 1" />
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+    <material name="black">
+        <color rgba="0 0 0 1" />
+    </material>
+
+    <!-- 頭を作成 -->
+    <xacro:head width="${width}" />
+
+    <!-- ボディを作成 -->
+    <xacro:body width="${width}" bodylen="${bodylen}" />
+
+    <!-- 足を作成 -->
+    <xacro:leg prefix="right" leglen="${leglen}" footlen="${footlen}" />
+    <xacro:leg prefix="left" leglen="${leglen}" footlen="${footlen}" />
+
+
+    <!-- ボディと頭をつなげる -->
+    <joint name="head_swivel" type="continuous">
+        <parent link="base_link" />
+        <child link="head" />
+        <axis xyz="0 0 1" />
+        <origin xyz="0 0 ${bodylen/2}" />
+    </joint>
+
+    <!-- ボディと足をつなげる -->
+    <joint name="base_to_right_leg" type="fixed">
+        <parent link="base_link" />
+        <child link="right_leg" />
+        <origin xyz="0 ${-1*(width+.02)} 0.25" />
+    </joint>
+    <joint name="base_to_left_leg" type="fixed">
+        <parent link="base_link" />
+        <child link="left_leg" />
+        <origin xyz="0 ${(width+.02)} 0.25" />
+    </joint>
+
+    <gazebo>
+        <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+            <ros>
+                <namespace>/simplebot</namespace>
+            </ros>
+            <update_rate>30</update_rate>
+            <num_wheel_pairs>2</num_wheel_pairs>
+
+            <left_joint>left_front_wheel_joint</left_joint>
+            <right_joint>right_front_wheel_joint</right_joint>
+            <wheel_separation>0.2</wheel_separation>
+            <wheel_diameter>0.07</wheel_diameter>
+            
+            <left_joint>left_back_wheel_joint</left_joint>
+            <right_joint>right_back_wheel_joint</right_joint>
+            <wheel_separation>0.2</wheel_separation>
+            <wheel_diameter>0.07</wheel_diameter>
+
+            <robot_base_frame>base_link</robot_base_frame>
+        </plugin>
+    </gazebo>
+
+    <gazebo reference="left_front_wheel_joint">
+        <mu>10.0</mu>
+    </gazebo>
+
+    <gazebo reference="right_front_wheel_joint">
+        <mu>10.0</mu>
+    </gazebo>
+
+    <gazebo reference="left_back_wheel_joint">
+        <mu>10.0</mu>
+    </gazebo>
+
+    <gazebo reference="right_back_wheel_joint">
+        <mu>10.0</mu>
+    </gazebo>
+
+</robot>

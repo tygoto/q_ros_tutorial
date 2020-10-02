@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="head" params="width">
+
+        <link name="head">
+            <visual>
+                <geometry>
+                    <sphere radius="${width}" />
+                </geometry>
+                <material name="white" />
+            </visual>
+            <collision>
+                <geometry>
+                    <sphere radius="${width}" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="2.0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+            </inertial>
+        </link>
+        
+        <link name="box">
+            <visual>
+                <geometry>
+                    <box size="0.08 0.08 0.08" />
+                </geometry>
+                <material name="blue" />
+                <origin xyz="-0.04 0 0" />
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="0.08 0.08 0.08" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="1.0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+            </inertial>
+        </link>
+
+        <joint name="tobox" type="fixed">
+            <parent link="head" />
+            <child link="box" />
+            <origin xyz="${.707*width+0.04} 0 ${.707*width}" />
+        </joint>
+
+    </xacro:macro>
+
+</robot>

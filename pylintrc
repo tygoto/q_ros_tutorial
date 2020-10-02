@@ -1,0 +1,6 @@
+[MASTER]
+init-hook='import sys; sys.path.append("/opt/ros/foxy/lib/python3.8/site-packages")'
+
+disabled = missing-module-docstring
+disabled = missing-docstring
+disabled = unused-import
